@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8 />
+	<title>Golden Gate Park</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+
+  <style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: "whitesmoke";
+			font-family: "Noto Sans", sans-serif;
+			color: #3d3d3d;
+		}
+
+		h1 {
+			position: absolute;
+			margin-top: 0;
+			top: 10px;
+			left: 45px;
+			font-size: 2em;
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+			padding: 10px 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		h2 {
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		section {
+			position: absolute;
+			bottom: 0;
+			left: 10px;
+			width: 280px;
+			margin: 20px auto;
+			padding: 0 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		p {
+			font-size: .9em;
+			line-height: 1.5em;
+		}
+
+		a {
+			color: #005daa;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>De Young To Strawberry Hill</h1>
+
+	<div id='map'></div>
+
+	<section>
+		<h2>Traveling Through Golden Gate Park</h2>
+
+		<p><a href="www.goldengatepark.com">Golden Gate Park</a> is located in western San Francisco and is considered an extremely popular area of the city. It is easy to become lost within the extensive greenway, so it is best to know your planned route ahead of time.</p>
+
+		<p>Shown is the fastest walking route from the de Young Art Museum to Strawberry Hill. Two landmarks are also shown to provide checkpoints along the route. Be advised, the elevation change from the de Young Museum to Strawberry Hill is a net change of 272 ft, starting at 105 ft and ending at 377 ft. If taking this route it would be sensible to wear appropriate shoes for this change in elevation.
+		</p>
+
+		<p>Sources: <a href="https://www.google.com/maps/dir/de+Young+Museum,+50+Hagiwara+Tea+Garden+Dr,+San+Francisco,+CA+94118/Strawberry+Hill,+San+Francisco,+CA/@37.7699192,-122.4807525,15z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x80858099be62b323:0x6cffe7b6954fe44a!2m2!1d-122.4686755!2d37.771469!1m5!1m1!1s0x8085876eadee98e9:0x8653a8910b4a0628!2m2!1d-122.4753199!2d37.7686398!3e2">Google Maps</a>, <a href="www.goldengatepark.com">Golden Gate Park Official Website</a></p>
+		<p>Map authored by Jess Payne</p>
+
+	</section>
+
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+	<script src="data/route.js"></script>
+
+	<script>
+
+//options to be used when creating the map
+		var options = {
+			center: [37.76946081872861, -122.47118235988692],
+			zoom: 17
+		}
+
+//creation of the Leaflet map
+		var map = L.map('map', options);
+
+//request to load basemap
+var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+//string content to be inserted into a tooltip
+		var message = 'De Young Museum';
+
+//create a Leaflet marker, centered on the map's center.
+	//	L.marker(map.getCenter())
+	//		.bindTooltip(message) //bind the tooltip and message to the marker
+	//		.addTo(map) // add the marker to the map`
+	//		.openTooltip(); // open the tooltip
+
+var myRoute = L.geoJSON(data, {
+	filter: function(feature) {
+		if(feature.geometry.type == "LineString") {
+			return feature;
+		}
+	},
+	style: function(feature) {
+
+		return {
+			color: "#cf363b",
+			weight: 7,
+			opacity: 0.8,
+			strokedashArray: "10,10"
+		}
+	}
+}).addTo(map);
+
+var myStops = L.geoJSON(data, {
+	filter: function(feature) {
+		if(feature.geometry.type == "Point") {
+			return feature;
+		}
+	},
+	onEachFeature: function(feature, layer) {
+		layer.bindTooltip(feature.properties['name']);
+	}
+}).addTo(map);
+
+
+
+	</script>
+
+</body>
+
+</html>
